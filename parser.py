@@ -28,7 +28,7 @@ try:
 			link = str(lessonsLinks[i].get('href'))
 			try:
 				file = r.get(link)
-				print('Writing ' + str((i+1)) + ' lesson')
+				print(name + ' downloaded')
 				with open('lesson' + str((i+1)) + '.mp4', 'wb') as f:
 					f.write(file.content)
 				i += 1
