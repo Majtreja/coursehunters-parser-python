@@ -18,11 +18,11 @@ try:
 
 		lessonsNames = lessonsList.find_all(itemprop='name')
 
-		lenght = len(lessonsLinks)
+		length = len(lessonsLinks)
 
 		i = 0
 
-		while (i < lenght):
+		while (i < length):
 			print('Getting ' + str((i+1)) + ' lesson')
 			name = lessonsNames[i].contents[0]
 			link = str(lessonsLinks[i].get('href'))
