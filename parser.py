@@ -35,8 +35,14 @@ try:
 			except:
 				pprint.pprint('Что-то явно пошло не так. Возможно вы ввели ссылку не на coursehunters.')
 
+				time.sleep(5)
+
 	except:
 		pprint.pprint('Судя по всему, вы ввели ссылку НЕ на coursehunters')
 
+		time.sleep(5)
+
 except:
 	pprint.pprint('Вы ввели непонятно что')
+
+	time.sleep(5)
