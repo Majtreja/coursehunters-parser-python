@@ -22,21 +22,36 @@ try:
 
 		i = 0
 
+		print(length)
+		print(lessonsLinks)
+
 		while (i < length):
-			print('Getting ' + str((i+1)) + ' lesson')
-			name = lessonsNames[i].contents[0]
-			link = str(lessonsLinks[i].get('href'))
+			# print('Getting ' + str((i+1)) + ' lesson')
+			# name = lessonsNames[i].contents[0]
+			# link = str(lessonsLinks[i].get('href'))
+			# try:
+			# 	file = r.get(link)
+			# 	print(name + ' downloaded')
+			# 	with open('lesson' + str((i+1)) + '.mp4', 'wb') as f:
+			# 		f.write(file.content)
+			# 	i += 1
 			try:
-				file = r.get(link)
-				print(name + ' downloaded')
-				with open('lesson' + str((i+1)) + '.mp4', 'wb') as f:
-					f.write(file.content)
-				i += 1
+				file = open('lesson' + str((i+1)) + '.mp4', 'r')
+				print('Такой файл уже существует. lesson' + str((i+1)) + ' был загружен ранее.')
+				i =+ 1
 			except:
-				pprint.pprint('Что-то явно пошло не так. Возможно вы ввели ссылку не на coursehunters.')
-
-				time.sleep(5)
-
+				print('Getting ' + str((i+1)) + 'lessons')
+				name = lessonsNames[i].contents[0]
+				link = str(lessonsLinks[i].get('href'))
+				try:
+					file = r.get(link)
+					print(name + ' downloaded')
+					with open('lesson' + str((i+1)) + '.mp4', 'wb') as f:
+						f.write(file.content)
+					i += 1
+				except:
+					pprint.pprint('Произошла ошибка. Возможно вы ввели ссылку не на coursehunters курс.')
+ 
 	except:
 		pprint.pprint('Судя по всему, вы ввели ссылку НЕ на coursehunters')
 
