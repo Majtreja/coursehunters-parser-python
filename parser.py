@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup as bs
 import requests as r
 import time
 import pprint
+import sys
 
 link = input('Введите ссылку на курс\n')
 
@@ -22,9 +23,6 @@ try:
 
 		i = 0
 
-		print(length)
-		print(lessonsLinks)
-
 		while (i < length):
 			# print('Getting ' + str((i+1)) + ' lesson')
 			# name = lessonsNames[i].contents[0]
@@ -37,10 +35,10 @@ try:
 			# 	i += 1
 			try:
 				file = open('lesson' + str((i+1)) + '.mp4', 'r')
-				print('Такой файл уже существует. lesson' + str((i+1)) + ' был загружен ранее.')
-				i =+ 1
+				print('lesson' + str((i+1)) + ' был загружен ранее.')
+				i += 1
 			except:
-				print('Getting ' + str((i+1)) + 'lessons')
+				print('Getting ' + str((i+1)) + ' lesson')
 				name = lessonsNames[i].contents[0]
 				link = str(lessonsLinks[i].get('href'))
 				try:
@@ -51,13 +49,16 @@ try:
 					i += 1
 				except:
 					pprint.pprint('Произошла ошибка. Возможно вы ввели ссылку не на coursehunters курс.')
+					time.sleep(5)
+
+
  
 	except:
 		pprint.pprint('Судя по всему, вы ввели ссылку НЕ на coursehunters')
-
 		time.sleep(5)
+		sys.exit()
 
-except:
+except KeyboardInterrupt:
 	pprint.pprint('Вы ввели непонятно что')
-
 	time.sleep(5)
+	sys.exit()
