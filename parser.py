@@ -24,15 +24,6 @@ try:
 		i = 0
 
 		while (i < length):
-			# print('Getting ' + str((i+1)) + ' lesson')
-			# name = lessonsNames[i].contents[0]
-			# link = str(lessonsLinks[i].get('href'))
-			# try:
-			# 	file = r.get(link)
-			# 	print(name + ' downloaded')
-			# 	with open('lesson' + str((i+1)) + '.mp4', 'wb') as f:
-			# 		f.write(file.content)
-			# 	i += 1
 			try:
 				file = open('lesson' + str((i+1)) + '.mp4', 'r')
 				print('lesson' + str((i+1)) + ' был загружен ранее.')
