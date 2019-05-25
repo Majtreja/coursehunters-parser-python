@@ -1,55 +1,31 @@
-from bs4 import BeautifulSoup as bs
+from bs4 import BeautifulSoup
 import requests as r
 import time
-import pprint
 import sys
+import os.path
 
-link = input('Введите ссылку на курс\n')
+def get_course(link):
+    page = r.get(link)
+    soup = BeautifulSoup(page.text, 'lxml')
+
+    lessons_list = soup.find(class_='lessons-list')
+    if not lessons_list:
+        input('Произошла ошибка. Возможно вы ввели ссылку не на coursehunters. Нажмите Enter для выхода.')
+        sys.exit()
+    lessons_links = lessons_list.find_all(itemprop='url')
+    lessons_names = lessons_list.find_all(itemprop='name')
+
+    for i in range(len(lessons_links)):
+        if os.path.exists(f'lesson{i+1}.mp4'):
+            print(f'lesson {i + 1} был загружен ранее.')
+        else:
+            print(f'Getting {i + 1} lesson')
+            file = r.get(str(lessons_links[i].get('href')))
+            print(f'{lessons_names[i].contents[0]} downloaded')
+            with open(f'lesson{i + 1}.mp4', 'wb') as f:
+                f.write(file.content)
 
 try:
-	page = r.get(link)
-
-
-	soup = bs(page.text, 'lxml')
-
-	try:
-		lessonsList = soup.find(class_='lessons-list')
-
-		lessonsLinks = lessonsList.find_all(itemprop='url')
-
-		lessonsNames = lessonsList.find_all(itemprop='name')
-
-		length = len(lessonsLinks)
-
-		i = 0
-
-		while (i < length):
-			try:
-				file = open('lesson' + str((i+1)) + '.mp4', 'r')
-				print('lesson' + str((i+1)) + ' был загружен ранее.')
-				i += 1
-			except:
-				print('Getting ' + str((i+1)) + ' lesson')
-				name = lessonsNames[i].contents[0]
-				link = str(lessonsLinks[i].get('href'))
-				try:
-					file = r.get(link)
-					print(name + ' downloaded')
-					with open('lesson' + str((i+1)) + '.mp4', 'wb') as f:
-						f.write(file.content)
-					i += 1
-				except:
-					pprint.pprint('Произошла ошибка. Возможно вы ввели ссылку не на coursehunters курс.')
-					time.sleep(5)
-
-
- 
-	except:
-		pprint.pprint('Судя по всему, вы ввели ссылку НЕ на coursehunters')
-		time.sleep(5)
-		sys.exit()
-
+    get_course(input('Введите ссылку на курс\n'))
 except KeyboardInterrupt:
-	pprint.pprint('Вы ввели непонятно что')
-	time.sleep(5)
-	sys.exit()
+    pass
