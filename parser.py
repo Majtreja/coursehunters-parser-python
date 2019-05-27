@@ -5,7 +5,13 @@ import sys
 import os.path
 
 def get_course(link):
-    page = r.get(link)
+    
+    try:
+        page = r.get(link)
+    except:
+        print('Вы ввели нерабочую ссылку.')
+        sys.exit()
+
     soup = BeautifulSoup(page.text, 'lxml')
 
     lessons_list = soup.find(class_='lessons-list')
