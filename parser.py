@@ -19,6 +19,7 @@ def how_to_download():
 
 
 def choose_course(request):
+    request = request.replace(' ', '+')
 
     try:
         page = r.get(f'https://coursehunters.net/search?q={request}&orderBy=')
@@ -59,11 +60,8 @@ def get_course(link):
     soup = BeautifulSoup(page.text, 'lxml')
     course_name = {soup.find('article').find('h1').contents[0].replace(' - Видеоуроки', '')}
     print(f'Вы действительно хотите скачать этот курс? {list(course_name)[0]}\nОтветьте y если да.')
-    if input()[0] == 'y':
-    	pass
-    else:
-    	print('Отмена.')
-    	sys.exit()
+    if input()[0] != 'y':
+        return
 
     lessons_list = soup.find(class_='lessons-list')
     if not lessons_list:
