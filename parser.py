@@ -6,16 +6,18 @@ import os.path
 
 
 def how_to_download():
-    choise = input('1) Искать курсы по сайту.\n2) Ввести ссылку на курс.\n')
+    result = True
+    while result:
+        choice = input('1) Искать курсы по сайту.\n2) Ввести ссылку на курс.\n')
 
-    if choise == '1':
-        choose_course(input('Введите запрос:\n'))
-    elif choise == '2':
-        request = input('Введите ссылку на курс:\n')
-        get_course(request)
-    else:
-        print('Такого варианта нет.')
-        sys.exit()
+        if choice == '1':
+            result = choose_course(input('Введите запрос:\n'))
+        elif choice == '2':
+            result = get_course(input('Введите ссылку на курс:\n'))
+        else:
+            print('Такого варианта нет.')
+            sys.exit()
+    print(result)
 
 
 def choose_course(request):
@@ -41,12 +43,18 @@ def choose_course(request):
 
     for i in range (len(course_names)):
         print(f'{i + 1}) {course_names[i]}')
-
     try:
-        get_course(course_links[int(input('Введите № курса для скачивания: ')) - 1])
-    except IndexError:
-        print('Out of range.')
-        how_to_download()
+        course_number = int(input('Введите № курса для скачивания: '))
+    except ValueError:
+        print('Вы ввели не число.\n 1) Вернуться в начало.')
+        return input('\n') == '1'
+
+    if 0 <= course_number < len(course_links):
+        get_course(course_links[course_number - 1])
+    else:
+        print('Out of range.\n 1) Вернуться в начало.')
+        return input('\n') == '1'
+
 
 
 def get_course(link):
@@ -58,15 +66,15 @@ def get_course(link):
         sys.exit()
 
     soup = BeautifulSoup(page.text, 'lxml')
-    course_name = {soup.find('article').find('h1').contents[0].replace(' - Видеоуроки', '')}
+    course_name = soup.find('article').find('h1').contents[0].replace(' - Видеоуроки', '')
     print(f'Вы действительно хотите скачать этот курс? {list(course_name)[0]}\nОтветьте y если да.')
     if input()[0] != 'y':
-        return
+        return False
 
     lessons_list = soup.find(class_='lessons-list')
     if not lessons_list:
-        input('Произошла ошибка. Возможно вы ввели ссылку не на coursehunters. Нажмите Enter для выхода.')
-        sys.exit()
+        input('Произошла ошибка. Возможно вы ввели ссылку не на coursehunters. 1) для возвращения выполнения скрипта.')
+        return input('\n') == '1'
     lessons_links = lessons_list.find_all(itemprop='url')
     lessons_names = lessons_list.find_all(itemprop='name')
 
@@ -81,10 +89,7 @@ def get_course(link):
                 f.write(file.content)
 
     print('All lessons downloaded. Go to start(1) or exit(anything else)?')
-    if input('\n') == '1':
-        how_to_download()
-    else:
-        sys.exit()
+    return input('\n') == '1'
 
 
 try:
