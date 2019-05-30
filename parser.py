@@ -67,7 +67,7 @@ def get_course(link):
 
     soup = BeautifulSoup(page.text, 'lxml')
     course_name = soup.find('article').find('h1').contents[0].replace(' - Видеоуроки', '')
-    print(f'Вы действительно хотите скачать этот курс? {(course_name)}\nОтветьте y если да.')
+    print(f'Вы действительно хотите скачать этот курс? {course_name}\nОтветьте y если да.')
     if input()[0] != 'y':
         return False
 
