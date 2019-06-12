@@ -11,7 +11,7 @@ def how_to_download():
         choice = input('1) Искать курсы по сайту.\n2) Ввести ссылку на курс.\n')
 
         if choice == '1':
-            result = choose_course(input('Введите запрос:\n'))
+            result = search_course(input('Введите запрос:\n'))
         elif choice == '2':
             result = get_course(input('Введите ссылку на курс:\n'))
         else:
@@ -20,45 +20,45 @@ def how_to_download():
     print(result)
 
 
-def choose_course(request):
-    request = request.replace(' ', '+')
+def search_course(request):
+    request = request.replace(' ','+')
 
     try:
         page = r.get(f'https://coursehunters.net/search?q={request}&orderBy=')
     except:
-        print('Что-то не так со ссылкой. Попробуйте ещё раз, или напишите мне о проблеме. Telegram @lexani42.')
+        print('Что-то не так с ссылкой. Попробуйте ещё раз, или напишите мне о проблеме. Telegram @lexani42.')
 
     soup = BeautifulSoup(page.text, 'lxml')
+    course_list = soup.find(class_='course-list')
+    if not course_list:
+        print('Произошла ошибка. Попробуйте ещё раз, или напишите мне о проблеме. Telegram @lexani42.')
+        input()
+
     course_names = []
     course_links = []
+    all_courses = course_list.find_all(class_='course')
 
-    for i in soup.find_all(class_='standard-course-block'):
-        course_names.append(i.find(class_='standard-course-block__course-name').find(itemprop='headline').contents[0])
-        course_links.append(i.find(class_='standard-course-block__course-name').find('a').get('href'))
-
-    # delete premium courses
-    for i in range (len(soup.find_all(class_='standard-block_blue'))):
-        course_names.pop()
-        course_links.pop()
+    for i in all_courses:
+        course_names.append(i.find(class_='course-primary-name').contents[0])
+        course_links.append(i.find(class_='course-btn btn').get('href'))
 
     for i in range (len(course_names)):
-        print(f'{i + 1}) {course_names[i]}')
+        print(f'{i+1} {course_names[i]}')
+
     try:
-        course_number = int(input('Введите № курса для скачивания: '))
+        course_number = int(input('Введите № курса для скачиавния: '))
     except ValueError:
-        print('Вы ввели не число.\n 1) Вернуться в начало.')
-        return input('\n') == '1'
+        print('Вы ввели не число.\n1) Вернуться в начало.')
+        return input() == '1'
 
-    if 0 <= course_number < len(course_links):
-        get_course(course_links[course_number - 1])
+    if 0 < course_number <= len(course_links):
+        return get_course(course_links[course_number - 1])
     else:
-        print('Out of range.\n 1) Вернуться в начало.')
-        return input('\n') == '1'
-
+        print('Out of range.\n1) Вернуться в начало.')
+        return input() == '1'
 
 
 def get_course(link):
-
     try:
         page = r.get(link)
     except:
@@ -66,31 +66,34 @@ def get_course(link):
         sys.exit()
 
     soup = BeautifulSoup(page.text, 'lxml')
-    course_name = soup.find('article').find('h1').contents[0].replace(' - Видеоуроки', '')
-    print(f'Вы действительно хотите скачать этот курс? {course_name}\nОтветьте y если да.')
-    if input()[0] != 'y':
-        return False
 
-    lessons_list = soup.find(class_='lessons-list')
-    if not lessons_list:
-        input('Произошла ошибка. Возможно вы ввели ссылку не на coursehunters. 1) для возвращения выполнения скрипта.')
-        return input('\n') == '1'
-    lessons_links = lessons_list.find_all(itemprop='url')
-    lessons_names = lessons_list.find_all(itemprop='name')
+    if soup.find(class_='btn mb-20').contents[0] == 'Course Paid':
+        print('К сожалению, этот курс является платным. Оформите подписку на coursehunters для просмотра. 1) Переход к началу выполнения скрипта.')
+        return input() == '1'
 
-    for i in range(len(lessons_links)):
+    lesson_list = soup.find(class_='lessons-list')
+    if not lesson_list:
+        print('Произошла ошибка. Возможно вы ввели ссылку не на coursehunters. 1) Вернуться к началу скрипта.')
+        return input() == '1'
+    lessons = lesson_list.find_all(class_='lessons-item')
+    lesson_names = []
+    lesson_links = []
+    for i in lessons:
+        lesson_names.append(i.find(class_='lessons-name').contents[0])
+        lesson_links.append(i.find(itemprop='url').get('href'))
+
+    for i in range(len(lesson_links)):
         if os.path.exists(f'lesson{i+1}.mp4'):
-            print(f'lesson {i + 1} был загружен ранее.')
+           print(f'lesson {i+1} был загружен ранее')
         else:
-            print(f'Getting {i + 1} lesson')
-            file = r.get(str(lessons_links[i].get('href')))
-            print(f'{lessons_names[i].contents[0]} downloaded')
-            with open(f'lesson{i + 1}.mp4', 'wb') as f:
+            print(f'Getting {i+1} lesson')
+            file = r.get(str(lesson_links[i]))
+            print(f'{lesson_names[i]} downloaded')
+            with open(f'lesson{i+1}.mp4', 'wb') as f:
                 f.write(file.content)
 
-    print('All lessons downloaded. Go to start(1) or exit(anything else)?')
-    return input('\n') == '1'
-
+    print('All lessons downloaded. Go to start(1) or exit?')
+    return input() == '1'
 
 try:
     how_to_download()
