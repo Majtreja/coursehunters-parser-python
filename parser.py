@@ -1,8 +1,24 @@
+# -*- coding: utf-8 -*-
+
 from bs4 import BeautifulSoup
 import requests as r
 import time
 import sys
 import os.path
+
+
+def check_version():
+    print('Checking for new updates. Please, wait.')
+    todays_commit_name = 'v3.1 add notification about updates'
+    github_page = r.get('https://github.com/Lexani42/coursehunters-parser-python')
+    soup = BeautifulSoup(github_page.text, 'lxml')
+    github_commit_name = soup.find(class_='message text-inherit').get('title')
+    if github_commit_name == todays_commit_name:
+        print('It\'s OK, you use last version.')
+        how_to_download()
+    else:
+        print('Sorry, but you use old version of my product. It can work extraordinary, you should update it to new version.')
+        how_to_download()
 
 
 def how_to_download():
@@ -96,6 +112,6 @@ def get_course(link):
     return input() == '1'
 
 try:
-    how_to_download()
+    check_version()
 except KeyboardInterrupt:
     pass
