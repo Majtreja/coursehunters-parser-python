@@ -33,7 +33,6 @@ def how_to_download():
         else:
             print('Такого варианта нет.')
             sys.exit()
-    print(result)
 
 
 def search_course(request):
@@ -83,7 +82,7 @@ def get_course(link):
 
     soup = BeautifulSoup(page.text, 'lxml')
 
-    if type(soup.find(class_='btn mb-20')) != 'NoneType':
+    if 'Премиум' in page.text:
         print('К сожалению, этот курс является платным. Оформите подписку на coursehunters для просмотра. 1) Переход к началу выполнения скрипта.')
         return input() == '1'
 
