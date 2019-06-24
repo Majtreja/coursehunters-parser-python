@@ -9,7 +9,7 @@ import os.path
 
 def check_version():
     print('Checking for new updates. Please, wait.')
-    todays_commit_name = 'v3.1 add notification about updates'
+    todays_commit_name = 'v3.2 fix bugs with premium check'
     github_page = r.get('https://github.com/Lexani42/coursehunters-parser-python')
     soup = BeautifulSoup(github_page.text, 'lxml')
     github_commit_name = soup.find(class_='message text-inherit').get('title')
@@ -83,7 +83,7 @@ def get_course(link):
 
     soup = BeautifulSoup(page.text, 'lxml')
 
-    if soup.find(class_='btn mb-20').contents[0] == 'Course Paid':
+    if type(soup.find(class_='btn mb-20')) != 'NoneType':
         print('К сожалению, этот курс является платным. Оформите подписку на coursehunters для просмотра. 1) Переход к началу выполнения скрипта.')
         return input() == '1'
 
