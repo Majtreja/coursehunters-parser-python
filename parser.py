@@ -9,7 +9,7 @@ import os.path
 
 def check_version():
     print('Checking for new updates. Please, wait.')
-    todays_commit_name = 'v3.2 fix bugs with premium check'
+    todays_commit_name = 'v3.2.1 completely translate'
     github_page = r.get('https://github.com/Lexani42/coursehunters-parser-python')
     soup = BeautifulSoup(github_page.text, 'lxml')
     github_commit_name = soup.find(class_='message text-inherit').get('title')
@@ -24,14 +24,14 @@ def check_version():
 def how_to_download():
     result = True
     while result:
-        choice = input('1) Искать курсы по сайту.\n2) Ввести ссылку на курс.\n')
+        choice = input('1) Find courses.\n2) Paste link to course.\n')
 
         if choice == '1':
-            result = search_course(input('Введите запрос:\n'))
+            result = search_course(input('Input request:\n'))
         elif choice == '2':
-            result = get_course(input('Введите ссылку на курс:\n'))
+            result = get_course(input('Input link:\n'))
         else:
-            print('Такого варианта нет.')
+            print('There isn\'t such variant.')
             sys.exit()
 
 
@@ -41,12 +41,12 @@ def search_course(request):
     try:
         page = r.get(f'https://coursehunters.net/search?q={request}&orderBy=')
     except:
-        print('Что-то не так с ссылкой. Попробуйте ещё раз, или напишите мне о проблеме. Telegram @lexani42.')
+        print('Hmm, it\'s looks like your link is not correct. If you think that it\'s an error, notify me about it.\nTelegram @lexani42.')
 
     soup = BeautifulSoup(page.text, 'lxml')
     course_list = soup.find(class_='course-list')
     if not course_list:
-        print('Произошла ошибка. Попробуйте ещё раз, или напишите мне о проблеме. Telegram @lexani42.')
+        print('Hmm, there is one error. I don\'t know a reason. Try again or notify me about this problem, I\'ll try to fix it.\nTelegram @lexani42.')
         input()
 
     course_names = []
@@ -61,15 +61,15 @@ def search_course(request):
         print(f'{i+1} {course_names[i]}')
 
     try:
-        course_number = int(input('Введите № курса для скачиавния: '))
+        course_number = int(input('Input course number to download: '))
     except ValueError:
-        print('Вы ввели не число.\n1) Вернуться в начало.')
+        print('I\'m sorry, but you should call your math teacher. That is not number.\n1) Go to start.')
         return input() == '1'
 
     if 0 < course_number <= len(course_links):
         return get_course(course_links[course_number - 1])
     else:
-        print('Out of range.\n1) Вернуться в начало.')
+        print('Out of range.\n1) Go to start.')
         return input() == '1'
 
 
@@ -77,18 +77,18 @@ def get_course(link):
     try:
         page = r.get(link)
     except:
-        print('Что-то не так со ссылкой. Попробуйте ещё раз, или напишите мне о проблеме. Telegram @lexani42.')
+        print('Hmm, it\'s looks like your link is not correct. If you think that it\'s an error, notify me about it.\nTelegram @lexani42.')
         sys.exit()
 
     soup = BeautifulSoup(page.text, 'lxml')
 
     if 'Премиум' in page.text:
-        print('К сожалению, этот курс является платным. Оформите подписку на coursehunters для просмотра. 1) Переход к началу выполнения скрипта.')
+        print('Oh, I\'m so sorry... It seems to me that this course is premium-only... If you think that it\'s an error, you can write me in Telegram, but firstly I want you to check this course. There is a link - ' + link + '. Thanks for understanding.\nTelegram: @lexani42.')
         return input() == '1'
 
     lesson_list = soup.find(class_='lessons-list')
     if not lesson_list:
-        print('Произошла ошибка. Возможно вы ввели ссылку не на coursehunters. 1) Вернуться к началу скрипта.')
+        print('Hmm, I think there is not a coursehunters link... What did you say? That was an error? Or, try to notice me about it.\nTelegram: @lexani42\n1) Go to start.')
         return input() == '1'
     lessons = lesson_list.find_all(class_='lessons-item')
     lesson_names = []
@@ -99,7 +99,7 @@ def get_course(link):
 
     for i in range(len(lesson_links)):
         if os.path.exists(f'lesson{i+1}.mp4'):
-           print(f'lesson {i+1} был загружен ранее')
+           print(f'lesson {i+1} was downloaded earlier')
         else:
             print(f'Getting {i+1} lesson')
             file = r.get(str(lesson_links[i]))
