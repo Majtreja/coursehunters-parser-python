@@ -83,7 +83,7 @@ def get_course(link):
     soup = BeautifulSoup(page.text, 'lxml')
 
     if 'Премиум' in page.text:
-        print('Oh, I\'m so sorry... It seems to me that this course is premium-only... If you think that it\'s an error, you can write me in Telegram, but firstly I want you to check this course. There is a link - ' + link + '. Thanks for understanding.\nTelegram: @lexani42.')
+        print('Oh, I\'m so sorry... It seems to me that this course is premium-only... If you think that it\'s an error, you can write me in Telegram, but firstly I want you to check this course. There is a link - ' + link + '. Thanks for understanding.\nTelegram: @lexani42.\n1) Go to start.')
         return input() == '1'
 
     lesson_list = soup.find(class_='lessons-list')
